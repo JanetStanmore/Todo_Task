@@ -2,51 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 /* Base */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-    display: block;
-}
-body {
-    line-height: 1;
-}
-ol, ul {
-    list-style: none;
-}
-blockquote, q {
-    quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-/* Main CSS */
 :root {
     --primary-color: #333;
     --light-color: #f8f8ff;
@@ -118,12 +73,14 @@ body {
 
 .currently-viewing {
     font-size: 1.5rem;
+    /* Add a style for the currently-viewing span */
+    position: relative;
+    display: inline-block;
 }
 
-.currently-viewing > span {
-    font-weight: bold;
-    color: #e57373;
-    cursor: pointer;
+.currently-viewing span:hover {
+    text-decoration: underline; /* Add underline on hover */
+    color: var(--error-color); /* Change color on hover */
 }
 
 /* Sidebar Form */
@@ -267,52 +224,4 @@ body {
     margin-right: 1.6rem;
     opacity: 0.25;
     cursor: pointer;
-}
-
-/* Add a style for the currently-viewing span */
-.currently-viewing span:hover {
-    text-decoration: underline; /* Add underline on hover */
-    color: var(--error-color); /* Change color on hover */
-}
-
-/* Additional Styles for User Selection and Welcome Message */
-#user-management-container,
-#welcome-message,
-#username-input-container {
-    margin-bottom: 20px;
-}
-
-#user-management-container label,
-#username-input-container label {
-    font-size: 1.4rem;
-    margin-bottom: 8px;
-    display: block;
-}
-
-#user-management,
-#username-input {
-    width: 100%;
-    padding: 8px;
-    font-size: 1.6rem;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#delete-user-btn,
-#set-username-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.6rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background-color: var(--primary-color);
-    color: var(--light-color);
-}
-
-#delete-user-btn:hover,
-#set-username-btn:hover {
-    transform: scale(0.98);
-    background-color: var(--error-color);
 }
