@@ -29,6 +29,10 @@ const usernameInputContainer = document.getElementById('username-input-container
 const usernameInput = document.getElementById('username-input');
 const setUsernameBtn = document.getElementById('set-username-btn');
 
+// Selector for the user option elements
+const userOptionContainer = document.getElementById('user-option-container');
+const userOptionSelect = document.getElementById('user-option');
+
 // Local storage keys
 const LOCAL_STORAGE_CATEGORIES_KEY = 'LOCAL_STORAGE_CATEGORIES_KEY';
 const LOCAL_STORAGE_TODOS_KEY = 'LOCAL_STORAGE_TODOS_KEY';
@@ -48,6 +52,23 @@ setUsernameBtn.addEventListener('click', () => {
         saveAndRender(); // Update the display after setting the username
     } else {
         alert('Please enter a valid name!');
+    }
+});
+
+// EVENT: Toggle between existing and new user
+userOptionSelect.addEventListener('change', () => {
+    const selectedOption = userOptionSelect.value;
+
+    if (selectedOption === 'existing') {
+        // Show existing user elements
+        welcomeMessageContainer.style.display = 'block';
+        usernameInputContainer.style.display = 'none';
+        setUsernameBtn.style.display = 'none';
+    } else {
+        // Show new user elements
+        welcomeMessageContainer.style.display = 'none';
+        usernameInputContainer.style.display = 'block';
+        setUsernameBtn.style.display = 'block';
     }
 });
 
