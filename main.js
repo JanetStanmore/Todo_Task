@@ -22,10 +22,15 @@ const editTodoInput = document.querySelector('[data-edit-todo-input]');
 // Selector for todos container
 const todosContainer = document.querySelector('[data-cards]');
 
-// Selector for user management elements
+// Selectors for user management elements
+const userOptionSelect = document.querySelector('[data-user-option]');
+const welcomeMessageContainer = document.getElementById('welcome-message');
+const usernameInputContainer = document.getElementById('username-input-container');
+const setUsernameBtn = document.getElementById('set-username-btn');
 const userManagementContainer = document.getElementById('user-management-container');
 const userManagementSelect = document.getElementById('user-management');
 const deleteUserBtn = document.getElementById('delete-user-btn');
+const usernameContainer = document.getElementById('username');
 
 // Local storage keys
 const LOCAL_STORAGE_CATEGORIES_KEY = 'LOCAL_STORAGE_CATEGORIES_KEY';
@@ -35,6 +40,23 @@ const LOCAL_STORAGE_SELECTED_CATEGORY_ID_KEY = 'LOCAL_STORAGE_SELECTED_CATEGORY_
 let selectedCategoryId = localStorage.getItem(LOCAL_STORAGE_SELECTED_CATEGORY_ID_KEY);
 let categories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY)) || [];
 let todos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TODOS_KEY)) || [];
+
+// EVENT: Toggle between existing and new user
+userOptionSelect.addEventListener('change', () => {
+    const selectedOption = userOptionSelect.value;
+
+    if (selectedOption === 'existing') {
+        // Show existing user elements
+        welcomeMessageContainer.style.display = 'block';
+        usernameInputContainer.style.display = 'none';
+        setUsernameBtn.style.display = 'none';
+    } else {
+        // Show new user elements
+        welcomeMessageContainer.style.display = 'none';
+        usernameInputContainer.style.display = 'block';
+        setUsernameBtn.style.display = 'block';
+    }
+});
 
 // EVENT: Populate user options and handle user selection
 userManagementSelect.addEventListener('change', () => {
@@ -213,6 +235,7 @@ function render() {
     }
 }
 
+// Render user options
 function renderUserOptions() {
     // Add options for existing users
     users.forEach(user => {
@@ -229,6 +252,7 @@ function renderUserOptions() {
     userManagementSelect.appendChild(newOption);
 }
 
+// Render default user
 function renderDefaultUser() {
     // Set default user when the page loads or when a user is deleted
     if (users.length > 0) {
@@ -327,7 +351,7 @@ function getRandomHexColor() {
 // Initialize users
 const users = [
     { id: '1', name: 'Smruti', todos: [] },
-    { id: '2', name: 'John', todos: [] },
+    { id: '2', name: 'Adrian', todos: [] },
     // Add more users as needed
 ];
 
