@@ -73,14 +73,13 @@ body {
 
 .currently-viewing {
     font-size: 1.5rem;
-    /* Add a style for the currently-viewing span */
     position: relative;
     display: inline-block;
 }
 
 .currently-viewing span:hover {
-    text-decoration: underline; /* Add underline on hover */
-    color: var(--error-color); /* Change color on hover */
+    text-decoration: underline;
+    color: var(--error-color);
 }
 
 /* Sidebar Form */
@@ -184,7 +183,7 @@ body {
 /* Cards */
 .todos-container {
     display: grid;
-    grid-template-columns: repeat(4,1fr); 
+    grid-template-columns: repeat(4, 1fr); 
     grid-auto-rows: max-content;
     gap: 20px;
     padding: 1.6rem;
