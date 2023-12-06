@@ -266,7 +266,7 @@ function render() {
     }
 }
 
-// Render user options
+// Render user options (move this function to the bottom of main.js)
 function renderUserOptions() {
     // Add options for existing users
     users.forEach(user => {
@@ -283,7 +283,17 @@ function renderUserOptions() {
     userManagementSelect.appendChild(newOption);
 }
 
-// Render default user
+// Initialize users (move this block to the bottom of main.js)
+const users = [
+    { id: '1', name: 'Smruti', todos: [] },
+    { id: '2', name: 'Adrian', todos: [] },
+    // Add more users as needed
+];
+
+// Render user options (call the function at the bottom to render options initially)
+renderUserOptions();
+
+// Render default user (move this block to the bottom of main.js)
 function renderDefaultUser() {
     // Set default user when the page loads or when a user is deleted
     if (users.length > 0) {
@@ -303,6 +313,9 @@ function renderDefaultUser() {
         deleteUserBtn.style.display = 'none';
     }
 }
+
+// Render default user (call the function at the bottom to render initially)
+renderDefaultUser();
 
 function renderCategories() {
     categoriesContainer.innerHTML += `<li class="sidebar-item ${selectedCategoryId === 'null' || selectedCategoryId === null ? 'active' : ''}" data-category-id="">View All</li>
@@ -378,18 +391,5 @@ function getRandomHexColor() {
     while (hex.length < 6) hex = "0" + hex;
     return `#${hex}`;
 }
-
-// Initialize users
-const users = [
-    { id: '1', name: 'Smruti', todos: [] },
-    { id: '2', name: 'Adrian', todos: [] },
-    // Add more users as needed
-];
-
-// Render user options
-renderUserOptions();
-
-// Render default user
-renderDefaultUser();
 
 window.addEventListener('load', render);
