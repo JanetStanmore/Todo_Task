@@ -22,6 +22,13 @@ const editTodoInput = document.querySelector('[data-edit-todo-input]');
 // Selector for todos container
 const todosContainer = document.querySelector('[data-cards]');
 
+// Selector for the username elements
+const welcomeMessageContainer = document.getElementById('welcome-message');
+const usernameContainer = document.getElementById('username');
+const usernameInputContainer = document.getElementById('username-input-container');
+const usernameInput = document.getElementById('username-input');
+const setUsernameBtn = document.getElementById('set-username-btn');
+
 // Local storage keys
 const LOCAL_STORAGE_CATEGORIES_KEY = 'LOCAL_STORAGE_CATEGORIES_KEY';
 const LOCAL_STORAGE_TODOS_KEY = 'LOCAL_STORAGE_TODOS_KEY';
@@ -30,6 +37,19 @@ const LOCAL_STORAGE_SELECTED_CATEGORY_ID_KEY = 'LOCAL_STORAGE_SELECTED_CATEGORY_
 let selectedCategoryId = localStorage.getItem(LOCAL_STORAGE_SELECTED_CATEGORY_ID_KEY);
 let categories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY)) || [];
 let todos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TODOS_KEY)) || [];
+
+// EVENT: Set username
+setUsernameBtn.addEventListener('click', () => {
+    const enteredUsername = usernameInput.value.trim();
+
+    if (enteredUsername) {
+        usernameContainer.textContent = enteredUsername;
+        usernameInputContainer.style.display = 'none';
+        saveAndRender(); // Update the display after setting the username
+    } else {
+        alert('Please enter a valid name!');
+    }
+});
 
 // EVENT: Add Category
 newCategoryForm.addEventListener('submit', (e) => {
