@@ -41,355 +41,174 @@ let selectedCategoryId = localStorage.getItem(LOCAL_STORAGE_SELECTED_CATEGORY_ID
 let categories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY)) || [];
 let todos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TODOS_KEY)) || [];
 
-// EVENT: Toggle between existing and new user
-userOptionSelect.addEventListener('change', () => {
-    const selectedOption = userOptionSelect.value;
-
-    if (selectedOption === 'existing') {
-        // Show existing user elements
-        welcomeMessageContainer.style.display = 'block';
-        usernameInputContainer.style.display = 'none';
-        setUsernameBtn.style.display = 'none';
-    } else {
-        // Show new user elements
-        welcomeMessageContainer.style.display = 'none';
-        usernameInputContainer.style.display = 'block';
-        setUsernameBtn.style.display = 'block';
-    }
-});
-
-// Event: Populate user options and handle user selection
-userManagementSelect.addEventListener('change', () => {
-    const selectedUserId = userManagementSelect.value;
-
-    if (selectedUserId === 'new') {
-        // Show input container for creating a new user
-        welcomeMessageContainer.style.display = 'none';
-        usernameInputContainer.style.display = 'block';
-        setUsernameBtn.style.display = 'block';
-        deleteUserBtn.style.display = 'none'; // Hide delete user button for new user
-        clearChildElements(userManagementSelect);
-        renderUserOptions(); // Re-render user options excluding the 'New User' option
-    } else {
-        // Show existing user elements
-        const selectedUser = users.find(user => user.id === selectedUserId);
-        welcomeMessageContainer.style.display = 'block';
-        usernameInputContainer.style.display = 'none';
-        setUsernameBtn.style.display = 'none';
-        deleteUserBtn.style.display = 'block'; // Show delete user button for existing user
-        usernameContainer.textContent = selectedUser.name;
-    }
-});
-
-// Event: Set Name (Create new user)
-setUsernameBtn.addEventListener('click', () => {
-    const newName = document.getElementById('username-input').value;
-
-    if (newName.trim() !== '') {
-        const newUser = {
-            id: Date.now().toString(),
-            name: newName,
-            todos: [] // You can initialize an empty array for user todos
-        };
-
-        users.push(newUser);
-
-        // Clear and re-render user options
-        clearChildElements(userManagementSelect);
-        renderUserOptions();
-
-        // Select the newly created user
-        userManagementSelect.value = newUser.id;
-
-        // Show existing user elements
-        welcomeMessageContainer.style.display = 'block';
-        usernameInputContainer.style.display = 'none';
-        setUsernameBtn.style.display = 'none';
-        deleteUserBtn.style.display = 'block';
-        usernameContainer.textContent = newUser.name;
-
-        saveAndRender(); // Save changes and re-render
-    }
-});
-
-// EVENT: Delete user
-deleteUserBtn.addEventListener('click', () => {
-    const selectedUserId = userManagementSelect.value;
-    const selectedUserIndex = users.findIndex(user => user.id === selectedUserId);
-
-    if (selectedUserIndex !== -1) {
-        users.splice(selectedUserIndex, 1);
-        clearChildElements(userManagementSelect);
-        renderUserOptions();
-        renderDefaultUser();
-    }
-});
-
-// EVENT: Add Category
-newCategoryForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const category = newCategoryInput.value;
-    const isCategoryEmpty = !category || !category.trim().length;
-
-    if (isCategoryEmpty) {
-        return console.log('please enter a task');
-    }
-
-    categories.push({ _id: Date.now().toString(), category: category, color: getRandomHexColor() });
-
-    newCategoryInput.value = '';
-
-    saveAndRender();
-});
-
-// EVENT: Get Selected Category Id
-categoriesContainer.addEventListener('click', (e) => {
-    if (e.target.tagName.toLowerCase() === 'li') {
-        if (!e.target.dataset.categoryId) {
-            selectedCategoryId = null;
-        } else {
-            selectedCategoryId = e.target.dataset.categoryId;
+// Function to render categories
+function renderCategories() {
+    categoriesContainer.innerHTML = '';
+    categories.forEach(category => {
+        const categoryElement = document.createElement('li');
+        categoryElement.classList.add('sidebar-item');
+        categoryElement.textContent = category.name;
+        categoryElement.style.color = category.color;
+        categoryElement.addEventListener('click', () => {
+            selectedCategoryId = category.id;
+            saveAndRender();
+        });
+        if (category.id === selectedCategoryId) {
+            categoryElement.classList.add('active');
         }
-
-        saveAndRender();
-    }
-});
-
-// EVENT: Get Selected Category Color
-categoriesContainer.addEventListener('change', (e) => {
-    if (e.target.tagName.toLowerCase() === 'input') {
-        const newCategoryColor = e.target.value;
-        const categoryId = e.target.parentElement.dataset.categoryId;
-        const categoryToEdit = categories.find((category) => category._id === categoryId);
-
-        categoryToEdit.color = newCategoryColor;
-
-        saveAndRender();
-    }
-});
-
-// EVENT: Delete Selected Category
-currentlyViewing.addEventListener('click', (e) => {
-    if (e.target.tagName.toLowerCase() === 'span') {
-        categories = categories.filter((category) => category._id !== selectedCategoryId);
-
-        todos = todos.filter((todo) => todo.categoryId !== selectedCategoryId);
-
-        selectedCategoryId = null;
-
-        saveAndRender();
-    }
-});
-
-// EVENT: Add Todo
-newTodoForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    todos.push({
-        _id: Date.now().toString(),
-        categoryId: newTodoSelect.value,
-        todo: newTodoInput.value,
+        categoriesContainer.appendChild(categoryElement);
     });
+}
 
-    newTodoSelect.value = '';
-    newTodoInput.value = '';
-
-    saveAndRender();
-});
-
-// EVENT: Load Edit Todo Form With Values
-let todoToEdit = null;
-todosContainer.addEventListener('click', (e) => {
-    if (e.target.classList[1] === 'fa-edit') {
-        newTodoForm.style.display = 'none';
-        editTodoForm.style.display = 'flex';
-
-        todoToEdit = todos.find((todo) => todo._id === e.target.dataset.editTodo);
-
-        editTodoSelect.value = todoToEdit.categoryId;
-        editTodoInput.value = todoToEdit.todo;
+// Function to render todos
+function renderTodos() {
+    todosContainer.innerHTML = '';
+    let filteredTodos = todos;
+    if (selectedCategoryId) {
+        filteredTodos = filteredTodos.filter(todo => todo.categoryId === selectedCategoryId);
     }
-    if (e.target.classList[1] === 'fa-trash-alt') {
-        const todoToDeleteIndex = todos.findIndex((todo) => todo._id === e.target.dataset.deleteTodo);
+    filteredTodos.forEach(todo => {
+        const todoElement = document.createElement('div');
+        todoElement.classList.add('todo');
+        todoElement.style.borderColor = todo.categoryColor;
+        todoElement.innerHTML = `
+            <div class="todo-tag">${todo.categoryName}</div>
+            <p class="todo-description">${todo.text}</p>
+            <div class="todo-actions">
+                <i class="far fa-edit" data-edit-todo-id="${todo.id}"></i>
+                <i class="far fa-trash-alt" data-delete-todo-id="${todo.id}"></i>
+            </div>
+        `;
+        todoElement.querySelector('[data-edit-todo-id]').addEventListener('click', () => {
+            editTodoForm.style.display = 'flex';
+            editTodoSelect.value = todo.categoryId;
+            editTodoInput.value = todo.text;
+            editTodoInput.focus();
+            editTodoInput.select();
+        });
+        todoElement.querySelector('[data-delete-todo-id]').addEventListener('click', () => {
+            deleteTodo(todo.id);
+        });
+        todosContainer.appendChild(todoElement);
+    });
+}
 
-        todos.splice(todoToDeleteIndex, 1);
+// Function to render user options
+function renderUserOptions() {
+    userOptionSelect.innerHTML = '';
+    categories.forEach(category => {
+        const optionElement = document.createElement('option');
+        optionElement.value = category.id;
+        optionElement.textContent = category.name;
+        userOptionSelect.appendChild(optionElement);
+    });
+}
 
-        saveAndRender();
-    }
-});
+// Function to render welcome message
+function renderWelcomeMessage() {
+    const username = localStorage.getItem('username') || 'Guest';
+    welcomeMessageContainer.textContent = `Welcome Back, ${username}!`;
+}
 
-// EVENT: Update The Todo Being Edited With New Values
-editTodoForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+// Function to render currently viewing
+function renderCurrentlyViewing() {
+    const categoryName = selectedCategoryId ? categories.find(c => c.id === selectedCategoryId)?.name : 'All Categories';
+    currentlyViewing.textContent = `You are currently viewing ${categoryName}`;
+}
 
-    todoToEdit.categoryId = editTodoSelect.value;
-    todoToEdit.todo = editTodoInput.value;
+// Function to render all elements
+function render() {
+    renderCategories();
+    renderTodos();
+    renderUserOptions();
+    renderWelcomeMessage();
+    renderCurrentlyViewing();
+}
 
-    editTodoForm.style.display = 'none';
-    newTodoForm.style.display = 'flex';
-
-    editTodoSelect.value = '';
-    editTodoInput.value = '';
-
-    saveAndRender();
-});
-
-// *==================== Functions ====================
-
+// Function to save and render
 function saveAndRender() {
     save();
     render();
 }
 
+// Function to save categories and todos to local storage
 function save() {
     localStorage.setItem(LOCAL_STORAGE_CATEGORIES_KEY, JSON.stringify(categories));
     localStorage.setItem(LOCAL_STORAGE_TODOS_KEY, JSON.stringify(todos));
     localStorage.setItem(LOCAL_STORAGE_SELECTED_CATEGORY_ID_KEY, selectedCategoryId);
 }
 
-function render() {
-    clearChildElements(categoriesContainer);
-    clearChildElements(newTodoSelect);
-    clearChildElements(editTodoSelect);
-    clearChildElements(todosContainer);
+// ... (existing code)
 
-    renderCategories();
-    renderFormOptions();
-    renderTodos();
+// Event listener for new category form submission
+newCategoryForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const categoryName = newCategoryInput.value.trim();
+    if (categoryName === '') return;
+    const newCategory = {
+        id: new Date().toISOString(),
+        name: categoryName,
+        color: getRandomColor(),
+    };
+    categories.push(newCategory);
+    newCategoryInput.value = '';
+    saveAndRender();
+});
 
-    // Set the current viewing category
-    if (!selectedCategoryId || selectedCategoryId === 'null') {
-        currentlyViewing.innerHTML = `You are currently viewing <strong>All Categories</strong>`;
-    } else {
-        const currentCategory = categories.find((category) => category._id === selectedCategoryId);
-        currentlyViewing.innerHTML = `You are currently viewing <strong>${currentCategory.category}</strong> <span>(delete)</span>`;
+// Event listener for new todo form submission
+newTodoForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const todoText = newTodoInput.value.trim();
+    if (todoText === '') return;
+    const newTodo = {
+        id: new Date().toISOString(),
+        text: todoText,
+        categoryId: newTodoSelect.value,
+    };
+    todos.push(newTodo);
+    newTodoInput.value = '';
+    saveAndRender();
+});
+
+// Event listener for edit todo form submission
+editTodoForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const editedTodoText = editTodoInput.value.trim();
+    if (editedTodoText === '') return;
+    const todoId = editTodoForm.dataset.editTodoId;
+    const todoToEdit = todos.find(todo => todo.id === todoId);
+    if (todoToEdit) {
+        todoToEdit.text = editedTodoText;
+        todoToEdit.categoryId = editTodoSelect.value;
+        editTodoForm.style.display = 'none';
+        saveAndRender();
     }
-}
+});
 
-// Render user options (move this function to the bottom of main.js)
-function renderUserOptions() {
-    // Add options for existing users
-    users.forEach(user => {
-        const option = document.createElement('option');
-        option.value = user.id;
-        option.textContent = user.name;
-        userManagementSelect.appendChild(option);
-    });
-
-    // Add option for creating a new user
-    const newOption = document.createElement('option');
-    newOption.value = 'new';
-    newOption.textContent = 'New User';
-    userManagementSelect.appendChild(newOption);
-}
-
-// Initialize users (move this block to the bottom of main.js)
-const users = [
-    { id: '1', name: 'Smruti', todos: [] },
-    { id: '2', name: 'Adrian', todos: [] },
-    // Add more users as needed
-];
-
-// Render user options (call the function at the bottom to render options initially)
-renderUserOptions();
-
-// Render default user (move this block to the bottom of main.js)
-function renderDefaultUser() {
-    // Set default user when the page loads or when a user is deleted
-    if (users.length > 0) {
-        const defaultUser = users[0];
-        userManagementSelect.value = defaultUser.id;
-        welcomeMessageContainer.style.display = 'block';
-        usernameInputContainer.style.display = 'none';
-        setUsernameBtn.style.display = 'none';
-        deleteUserBtn.style.display = 'block';
-        usernameContainer.textContent = defaultUser.name;
-    } else {
-        // If there are no users, show input container for creating a new user
-        userManagementSelect.value = 'new';
-        welcomeMessageContainer.style.display = 'none';
-        usernameInputContainer.style.display = 'block';
-        setUsernameBtn.style.display = 'block';
-        deleteUserBtn.style.display = 'none';
+// Event listener for set username button
+setUsernameBtn.addEventListener('click', function () {
+    const newUsername = document.getElementById('username-input').value.trim();
+    if (newUsername !== '') {
+        localStorage.setItem('username', newUsername);
+        renderWelcomeMessage();
     }
-}
+});
 
-// Render default user (call the function at the bottom to render initially)
-renderDefaultUser();
+// Event listener for delete user button
+deleteUserBtn.addEventListener('click', function () {
+    localStorage.removeItem('username');
+    renderWelcomeMessage();
+});
 
-function renderCategories() {
-    categoriesContainer.innerHTML += `<li class="sidebar-item ${selectedCategoryId === 'null' || selectedCategoryId === null ? 'active' : ''}" data-category-id="">View All</li>
-	`;
-
-    categories.forEach(({ _id, category, color }) => {
-        categoriesContainer.innerHTML += ` <li class="sidebar-item ${_id === selectedCategoryId ? 'active' : ''}" data-category-id=${_id}>${category}<input class="sidebar-color" type="color" value=${color}></li>`;
-    });
-}
-
-function renderFormOptions() {
-
-    newTodoSelect.innerHTML += `<option value="">Select A Category</option>`;
-    editTodoSelect.innerHTML += `<option value="">Select A Category</option>`;
-
-    categories.forEach(({ _id, category }) => {
-        newTodoSelect.innerHTML += `<option value=${_id}>${category}</option>`;
-        editTodoSelect.innerHTML += `<option value=${_id}>${category}</option>`;
-    });
-}
-
-function renderTodos() {
-    let todosToRender = todos;
-
-    // if their is a Selected Category Id, and selected category id !== 'null then filter the todos
-    if (selectedCategoryId && selectedCategoryId !== 'null') {
-        todosToRender = todos.filter((todo) => todo.categoryId === selectedCategoryId);
+// Function to get random color
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
     }
-
-    // Render Todos
-    todosToRender.forEach(({ _id, categoryId, todo }) => {
-
-        // Get Complimentary categoryDetails Based On TaskId
-        const { color, category } = categories.find(({ _id }) => _id === categoryId);
-        const backgroundColor = convertHexToRGBA(color, 20);
-        todosContainer.innerHTML += `
-			<div class="todo" style="border-color: ${color}">
-					<div class="todo-tag" style="background-color: ${backgroundColor}; color: ${color};">
-						${category}
-					</div>
-					<p class="todo-description">${todo}</p>
-					<div class="todo-actions">
-						<i class="far fa-edit" data-edit-todo=${_id}></i>
-						<i class="far fa-trash-alt" data-delete-todo=${_id}></i>
-					</div>
-			</div>`;
-    });
+    return color;
 }
 
-// HELPERS
-function clearChildElements(element) {
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
-}
-
-function convertHexToRGBA(hexCode, opacity) {
-    let hex = hexCode.replace('#', '');
-
-    if (hex.length === 3) {
-        hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
-    }
-
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-
-    return `rgba(${r},${g},${b},${opacity / 100})`;
-}
-
-function getRandomHexColor() {
-    var hex = (Math.round(Math.random() * 0xffffff)).toString(16);
-    while (hex.length < 6) hex = "0" + hex;
-    return `#${hex}`;
-}
-
-window.addEventListener('load', render);
+// Initial render
+render();
