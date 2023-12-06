@@ -45,24 +45,22 @@
         <main class="main">
             <!-- Header -->
             <header class="header">
-                <div>
-                    <!-- User selection and welcome message -->
-                    <div class="form-control" id="user-management-container">
-                        <label for="user-management">Select User:</label>
-                        <select id="user-management">
-                            <!-- User options will be dynamically added here -->
-                        </select>
-                        <button class="btn btn-primary" id="delete-user-btn">Delete User</button>
-                    </div>
-                    <div class="header-title" id="welcome-message">Welcome Back, <strong id="username">Smruti</strong>!</div>
-                    <!-- Input container for creating a new user -->
-                    <div class="form-control" id="username-input-container">
-                        <label for="username-input">Enter Your Name:</label>
-                        <input type="text" id="username-input" placeholder="Your Name">
-                        <button class="btn btn-primary" id="set-username-btn">Set Name</button>
-                    </div>
-                    <div class="currently-viewing" data-currently-viewing>You are currently viewing All Categories</div>
+                <!-- User selection and welcome message -->
+                <div class="form-control" id="user-management-container">
+                    <label for="user-management">Select User:</label>
+                    <select id="user-management" data-user-option>
+                        <!-- User options will be dynamically added here -->
+                    </select>
+                    <button class="btn btn-primary" id="delete-user-btn">Delete User</button>
                 </div>
+                <div class="header-title" id="welcome-message">Welcome Back, <strong id="username">Smruti</strong>!</div>
+                <!-- Input container for creating a new user -->
+                <div class="form-control" id="username-input-container">
+                    <label for="username-input">Enter Your Name:</label>
+                    <input type="text" id="username-input" placeholder="Your Name">
+                    <button class="btn btn-primary" id="set-username-btn">Set Name</button>
+                </div>
+                <div class="currently-viewing" data-currently-viewing>You are currently viewing All Categories</div>
 
                 <!-- Create Todo Form -->
                 <form class="create-todo-form" data-new-todo-form>
