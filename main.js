@@ -95,15 +95,21 @@ function renderTodos() {
 
 // Function to render user options
 function renderUserOptions() {
-    const storedCategories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY)) || [];
+    const storedUsername = localStorage.getItem('username') || 'Guest';
+    
+    // Clear existing options
     userOptionSelect.innerHTML = '';
 
-    storedCategories.forEach(category => {
-        const optionElement = document.createElement('option');
-        optionElement.value = category.id;
-        optionElement.textContent = category.name;
-        userOptionSelect.appendChild(optionElement);
-    });
+    // Create a single option for the username
+    const optionElement = document.createElement('option');
+    optionElement.value = 'user';
+    optionElement.textContent = storedUsername;
+
+    // Append the option to the dropdown
+    userOptionSelect.appendChild(optionElement);
+
+    // Set the selected option
+    userOptionSelect.value = 'user';
 }
 
 // Function to render welcome message
