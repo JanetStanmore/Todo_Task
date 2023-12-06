@@ -95,8 +95,10 @@ function renderTodos() {
 
 // Function to render user options
 function renderUserOptions() {
+    const storedCategories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY)) || [];
     userOptionSelect.innerHTML = '';
-    categories.forEach(category => {
+
+    storedCategories.forEach(category => {
         const optionElement = document.createElement('option');
         optionElement.value = category.id;
         optionElement.textContent = category.name;
@@ -137,8 +139,6 @@ function save() {
     localStorage.setItem(LOCAL_STORAGE_TODOS_KEY, JSON.stringify(todos));
     localStorage.setItem(LOCAL_STORAGE_SELECTED_CATEGORY_ID_KEY, selectedCategoryId);
 }
-
-// ... (existing code)
 
 // Event listener for new category form submission
 newCategoryForm.addEventListener('submit', function (e) {
@@ -212,3 +212,4 @@ function getRandomColor() {
 
 // Initial render
 render();
+
