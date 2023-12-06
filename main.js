@@ -22,16 +22,10 @@ const editTodoInput = document.querySelector('[data-edit-todo-input]');
 // Selector for todos container
 const todosContainer = document.querySelector('[data-cards]');
 
-// Selector for the username elements
-const welcomeMessageContainer = document.getElementById('welcome-message');
-const usernameContainer = document.getElementById('username');
-const usernameInputContainer = document.getElementById('username-input-container');
-const usernameInput = document.getElementById('username-input');
-const setUsernameBtn = document.getElementById('set-username-btn');
-
-// Selector for the user option elements
-const userOptionContainer = document.getElementById('user-option-container');
-const userOptionSelect = document.getElementById('user-option');
+// Selector for user management elements
+const userManagementContainer = document.getElementById('user-management-container');
+const userManagementSelect = document.getElementById('user-management');
+const deleteUserBtn = document.getElementById('delete-user-btn');
 
 // Local storage keys
 const LOCAL_STORAGE_CATEGORIES_KEY = 'LOCAL_STORAGE_CATEGORIES_KEY';
@@ -42,33 +36,39 @@ let selectedCategoryId = localStorage.getItem(LOCAL_STORAGE_SELECTED_CATEGORY_ID
 let categories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CATEGORIES_KEY)) || [];
 let todos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_TODOS_KEY)) || [];
 
-// EVENT: Set username
-setUsernameBtn.addEventListener('click', () => {
-    const enteredUsername = usernameInput.value.trim();
+// EVENT: Populate user options and handle user selection
+userManagementSelect.addEventListener('change', () => {
+    const selectedUserId = userManagementSelect.value;
 
-    if (enteredUsername) {
-        usernameContainer.textContent = enteredUsername;
-        usernameInputContainer.style.display = 'none';
-        saveAndRender(); // Update the display after setting the username
-    } else {
-        alert('Please enter a valid name!');
-    }
-});
-
-// EVENT: Toggle between existing and new user
-userOptionSelect.addEventListener('change', () => {
-    const selectedOption = userOptionSelect.value;
-
-    if (selectedOption === 'existing') {
-        // Show existing user elements
-        welcomeMessageContainer.style.display = 'block';
-        usernameInputContainer.style.display = 'none';
-        setUsernameBtn.style.display = 'none';
-    } else {
-        // Show new user elements
+    if (selectedUserId === 'new') {
+        // Show input container for creating a new user
         welcomeMessageContainer.style.display = 'none';
         usernameInputContainer.style.display = 'block';
         setUsernameBtn.style.display = 'block';
+        deleteUserBtn.style.display = 'none'; // Hide delete user button for new user
+        clearChildElements(userManagementSelect);
+        renderUserOptions(); // Re-render user options excluding the 'New User' option
+    } else {
+        // Show existing user elements
+        const selectedUser = users.find(user => user.id === selectedUserId);
+        welcomeMessageContainer.style.display = 'block';
+        usernameInputContainer.style.display = 'none';
+        setUsernameBtn.style.display = 'none';
+        deleteUserBtn.style.display = 'block'; // Show delete user button for existing user
+        usernameContainer.textContent = selectedUser.name;
+    }
+});
+
+// EVENT: Delete user
+deleteUserBtn.addEventListener('click', () => {
+    const selectedUserId = userManagementSelect.value;
+    const selectedUserIndex = users.findIndex(user => user.id === selectedUserId);
+
+    if (selectedUserIndex !== -1) {
+        users.splice(selectedUserIndex, 1);
+        clearChildElements(userManagementSelect);
+        renderUserOptions();
+        renderDefaultUser();
     }
 });
 
@@ -213,6 +213,42 @@ function render() {
     }
 }
 
+function renderUserOptions() {
+    // Add options for existing users
+    users.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user.id;
+        option.textContent = user.name;
+        userManagementSelect.appendChild(option);
+    });
+
+    // Add option for creating a new user
+    const newOption = document.createElement('option');
+    newOption.value = 'new';
+    newOption.textContent = 'New User';
+    userManagementSelect.appendChild(newOption);
+}
+
+function renderDefaultUser() {
+    // Set default user when the page loads or when a user is deleted
+    if (users.length > 0) {
+        const defaultUser = users[0];
+        userManagementSelect.value = defaultUser.id;
+        welcomeMessageContainer.style.display = 'block';
+        usernameInputContainer.style.display = 'none';
+        setUsernameBtn.style.display = 'none';
+        deleteUserBtn.style.display = 'block';
+        usernameContainer.textContent = defaultUser.name;
+    } else {
+        // If there are no users, show input container for creating a new user
+        userManagementSelect.value = 'new';
+        welcomeMessageContainer.style.display = 'none';
+        usernameInputContainer.style.display = 'block';
+        setUsernameBtn.style.display = 'block';
+        deleteUserBtn.style.display = 'none';
+    }
+}
+
 function renderCategories() {
     categoriesContainer.innerHTML += `<li class="sidebar-item ${selectedCategoryId === 'null' || selectedCategoryId === null ? 'active' : ''}" data-category-id="">View All</li>
 	`;
@@ -287,5 +323,18 @@ function getRandomHexColor() {
     while (hex.length < 6) hex = "0" + hex;
     return `#${hex}`;
 }
+
+// Initialize users
+const users = [
+    { id: '1', name: 'Smruti', todos: [] },
+    { id: '2', name: 'John', todos: [] },
+    // Add more users as needed
+];
+
+// Render user options
+renderUserOptions();
+
+// Render default user
+renderDefaultUser();
 
 window.addEventListener('load', render);
