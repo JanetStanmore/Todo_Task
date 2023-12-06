@@ -26,6 +26,7 @@ body {
     line-height: 1.6;
     padding: 32px;
     height: 100vh;
+    overflow: hidden; /* Prevent body from scrolling */
 }
 
 /* App container grid */
@@ -79,6 +80,12 @@ body {
     font-weight: bold;
     color: #e57373;
     cursor: pointer;
+}
+
+/* Add a style for the currently-viewing span */
+.currently-viewing span:hover {
+    text-decoration: underline; /* Add underline on hover */
+    color: var(--error-color); /* Change color on hover */
 }
 
 /* Sidebar Form */
@@ -208,8 +215,8 @@ body {
 }
 
 .todo-description {
-    font-size: 1.6rem;
-    margin: 1rem 0 2rem 0;
+    font-size: 1.rem;
+    margin: 1rem 0 0.5rem 0;
     word-break: break-all;
 }
 
@@ -219,7 +226,7 @@ body {
 
 .todo-actions i {
     font-size: 1.6rem;
-    margin-right: 1.6rem;
+    margin-right: 0.8rem;
     opacity: 0.25;
     cursor: pointer;
 }
