@@ -46,11 +46,20 @@
             <!-- Header -->
             <header class="header">
                 <div>
+                    <!-- Updated welcome message and input container -->
                     <div class="header-title" id="welcome-message">Welcome Back, <strong id="username">Smruti</strong>!</div>
                     <div class="form-control" id="username-input-container">
                         <label for="username-input">Enter Your Name:</label>
                         <input type="text" id="username-input" placeholder="Your Name">
                         <button class="btn btn-primary" id="set-username-btn">Set Name</button>
+                    </div>
+                    <!-- Option to choose existing or new user -->
+                    <div class="form-control" id="user-option-container">
+                        <label for="user-option">Choose User:</label>
+                        <select id="user-option">
+                            <option value="existing">Existing User</option>
+                            <option value="new">New User</option>
+                        </select>
                     </div>
                     <div class="currently-viewing" data-currently-viewing>You are currently viewing All Categories</div>
                 </div>
