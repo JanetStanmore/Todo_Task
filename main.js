@@ -58,7 +58,7 @@ userOptionSelect.addEventListener('change', () => {
     }
 });
 
-// EVENT: Populate user options and handle user selection
+// Event: Populate user options and handle user selection
 userManagementSelect.addEventListener('change', () => {
     const selectedUserId = userManagementSelect.value;
 
@@ -78,6 +78,37 @@ userManagementSelect.addEventListener('change', () => {
         setUsernameBtn.style.display = 'none';
         deleteUserBtn.style.display = 'block'; // Show delete user button for existing user
         usernameContainer.textContent = selectedUser.name;
+    }
+});
+
+// Event: Set Name (Create new user)
+setUsernameBtn.addEventListener('click', () => {
+    const newName = document.getElementById('username-input').value;
+
+    if (newName.trim() !== '') {
+        const newUser = {
+            id: Date.now().toString(),
+            name: newName,
+            todos: [] // You can initialize an empty array for user todos
+        };
+
+        users.push(newUser);
+
+        // Clear and re-render user options
+        clearChildElements(userManagementSelect);
+        renderUserOptions();
+
+        // Select the newly created user
+        userManagementSelect.value = newUser.id;
+
+        // Show existing user elements
+        welcomeMessageContainer.style.display = 'block';
+        usernameInputContainer.style.display = 'none';
+        setUsernameBtn.style.display = 'none';
+        deleteUserBtn.style.display = 'block';
+        usernameContainer.textContent = newUser.name;
+
+        saveAndRender(); // Save changes and re-render
     }
 });
 
