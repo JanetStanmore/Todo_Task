@@ -95,21 +95,13 @@ function renderTodos() {
 
 // Function to render user options
 function renderUserOptions() {
-    const storedUsername = localStorage.getItem('username') || 'Guest';
-    
-    // Clear existing options
     userOptionSelect.innerHTML = '';
-
-    // Create a single option for the username
-    const optionElement = document.createElement('option');
-    optionElement.value = 'user';
-    optionElement.textContent = storedUsername;
-
-    // Append the option to the dropdown
-    userOptionSelect.appendChild(optionElement);
-
-    // Set the selected option
-    userOptionSelect.value = 'user';
+    categories.forEach(category => {
+        const optionElement = document.createElement('option');
+        optionElement.value = category.id;
+        optionElement.textContent = category.name;
+        userOptionSelect.appendChild(optionElement);
+    });
 }
 
 // Function to render welcome message
@@ -218,4 +210,3 @@ function getRandomColor() {
 
 // Initial render
 render();
-
